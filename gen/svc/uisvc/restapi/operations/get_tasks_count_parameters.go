@@ -9,6 +9,10 @@ import (
 // GetTasksCountValidateURLParams validates the parameters in the
 // URL according to the swagger specification.
 func GetTasksCountValidateURLParams(h *handlers.H, ctx *gin.Context) *errors.Error {
+	ref := ctx.Query("ref")
+
+	ctx.Set("ref", ref)
+
 	repository := ctx.Query("repository")
 
 	ctx.Set("repository", repository)

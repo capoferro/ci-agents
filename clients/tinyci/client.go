@@ -129,8 +129,8 @@ func (c *Client) Unsubscribe(repository string) *errors.Error {
 }
 
 // Tasks returns the tasks with pagination and optional filtering. (Just pass empty values for no filters)
-func (c *Client) Tasks(repository, sha string, page, perPage int64) ([]*model.Task, *errors.Error) {
-	tasks, err := c.client.GetTasks(context.Background(), page, perPage, repository, sha)
+func (c *Client) Tasks(repository, sha, ref string, page, perPage int64) ([]*model.Task, *errors.Error) {
+	tasks, err := c.client.GetTasks(context.Background(), page, perPage, repository, sha, ref)
 	if err != nil {
 		return nil, err
 	}
@@ -141,8 +141,8 @@ func (c *Client) Tasks(repository, sha string, page, perPage int64) ([]*model.Ta
 }
 
 // TaskCount returns the total number of tasks matching the filter.
-func (c *Client) TaskCount(repository, sha string) (int64, *errors.Error) {
-	return c.client.GetTasksCount(context.Background(), repository, sha)
+func (c *Client) TaskCount(repository, sha, ref string) (int64, *errors.Error) {
+	return c.client.GetTasksCount(context.Background(), repository, sha, ref)
 }
 
 // RunsForTask returns the runs for the provided task id.

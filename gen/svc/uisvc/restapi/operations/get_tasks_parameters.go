@@ -25,6 +25,10 @@ func GetTasksValidateURLParams(h *handlers.H, ctx *gin.Context) *errors.Error {
 
 	ctx.Set("perPage", perPage)
 
+	ref := ctx.Query("ref")
+
+	ctx.Set("ref", ref)
+
 	repository := ctx.Query("repository")
 
 	ctx.Set("repository", repository)

@@ -100,9 +100,17 @@ func main() {
 					Name:  "repository, r",
 					Usage: "Repository name for filtering runs",
 				},
+				// TODO: This is kinda awkward cause SHAs are refs... maybe we
+				// should combine these two params on all APIs (uisvc,
+				// datasvc, etc) and inspect the string to see if its a SHA or
+				// ref?
+				cli.StringFlag{
+					Name:  "sha, s",
+					Usage: "SHA to filter repositories by. Repository is required if SHA provided, otherwise it is ignored.",
+				},
 				cli.StringFlag{
 					Name:  "ref, n",
-					Usage: "Ref/SHA name for filtering runs. Repository is required if SHA provided, otherwise it is ignored",
+					Usage: "Ref name for filtering runs",
 				},
 				cli.Int64Flag{
 					Name:  "page, p",
@@ -312,7 +320,7 @@ func tasks(ctx *cli.Context) error {
 		return err
 	}
 
-	tasks, err := client.Tasks(ctx.String("repository"), ctx.String("ref"), ctx.Int64("page"), ctx.Int64("count"))
+	tasks, err := client.Tasks(ctx.String("repository"), ctx.String("sha"), ctx.String("ref"), ctx.Int64("page"), ctx.Int64("count"))
 	if err != nil {
 		return err
 	}

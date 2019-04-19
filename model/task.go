@@ -239,13 +239,17 @@ func (m *Model) UpdateTaskStatus(task *Task) *errors.Error {
 	return m.WrapError(m.Save(task), "saving task")
 }
 
-func (m *Model) prepTaskListQuery(repository, sha string) (*gorm.DB, *errors.Error) {
+func (m *Model) prepTaskListQuery(repository, sha, ref string) (*gorm.DB, *errors.Error) {
 	db := m.Model(&Task{})
 
 	if repository != "" {
 		db = db.
 			Joins("left outer join refs on tasks.ref_id = refs.id").
 			Joins("left outer join repositories on tasks.parent_id = repositories.id or refs.repository_id = repositories.id")
+
+		if ref != "" {
+			db = db.Where("refs.ref = ?", ref)
+		}
 
 		if sha != "" {
 			db = db.Where("tasks.base_sha = ? or refs.sha = ? or refs.ref = ?", sha, sha, sha)
@@ -258,10 +262,10 @@ func (m *Model) prepTaskListQuery(repository, sha string) (*gorm.DB, *errors.Err
 }
 
 // CountTasks counts all the tasks, optionally based on the repository and sha.
-func (m *Model) CountTasks(repository, sha string) (int64, *errors.Error) {
+func (m *Model) CountTasks(repository, sha, ref string) (int64, *errors.Error) {
 	var count int64
 
-	db, err := m.prepTaskListQuery(repository, sha)
+	db, err := m.prepTaskListQuery(repository, sha, ref)
 	if err != nil {
 		return 0, err
 	}
@@ -275,13 +279,13 @@ func (m *Model) CountTasks(repository, sha string) (int64, *errors.Error) {
 }
 
 // ListTasks gathers all the tasks based on the page and perPage values. It can optionally filter by repository and SHA.
-func (m *Model) ListTasks(repository, sha string, page, perPage int64) ([]*Task, *errors.Error) {
+func (m *Model) ListTasks(repository, sha, ref string, page, perPage int64) ([]*Task, *errors.Error) {
 	page, perPage, err := utils.ScopePaginationInt(page, perPage)
 	if err != nil {
 		return nil, err
 	}
 
-	db, err := m.prepTaskListQuery(repository, sha)
+	db, err := m.prepTaskListQuery(repository, sha, ref)
 	if err != nil {
 		return nil, err
 	}

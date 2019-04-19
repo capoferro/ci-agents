@@ -92,6 +92,11 @@ type GetTasksParams struct {
 
 	*/
 	PerPage *int64
+	/*Ref
+	  optional; the name of the ref to get tasks by (eg. heads/master)
+
+	*/
+	Ref *string
 	/*Repository
 	  optional; the repository name to get the tasks for.
 
@@ -163,6 +168,17 @@ func (o *GetTasksParams) SetPerPage(perPage *int64) {
 	o.PerPage = perPage
 }
 
+// WithRef adds the ref to the get tasks params
+func (o *GetTasksParams) WithRef(ref *string) *GetTasksParams {
+	o.SetRef(ref)
+	return o
+}
+
+// SetRef adds the ref to the get tasks params
+func (o *GetTasksParams) SetRef(ref *string) {
+	o.Ref = ref
+}
+
 // WithRepository adds the repository to the get tasks params
 func (o *GetTasksParams) WithRepository(repository *string) *GetTasksParams {
 	o.SetRepository(repository)
@@ -219,6 +235,22 @@ func (o *GetTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		qPerPage := swag.FormatInt64(qrPerPage)
 		if qPerPage != "" {
 			if err := r.SetQueryParam("perPage", qPerPage); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Ref != nil {
+
+		// query param ref
+		var qrRef string
+		if o.Ref != nil {
+			qrRef = *o.Ref
+		}
+		qRef := qrRef
+		if qRef != "" {
+			if err := r.SetQueryParam("ref", qRef); err != nil {
 				return err
 			}
 		}

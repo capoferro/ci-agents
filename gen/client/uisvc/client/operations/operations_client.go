@@ -436,6 +436,59 @@ func (c *Client) GetLogout(ctx context.Context) *errors.Error {
 
 }
 
+// GetRefs obtain the list of refs for a given repository
+func (c *Client) GetRefs(ctx context.Context, repository string) *errors.Error {
+	route := "/refs"
+
+	tmp := *c.url
+	u := &tmp
+	u.Path += route
+
+	m := map[string]interface{}{}
+	m["repository"] = repository
+
+	if len(m) > 0 {
+		q := u.Query()
+
+		for key, value := range m {
+			q.Add(key, fmt.Sprintf("%v", value))
+		}
+
+		u.RawQuery = q.Encode()
+	}
+
+	var body []byte
+
+	req, err := http.NewRequest("GET", u.String(), bytes.NewBuffer(body))
+	if err != nil {
+		return errors.New(err)
+	}
+
+	req.Header.Add("Authorization", c.token)
+
+	resp, err := c.client.Do(req.WithContext(ctx))
+	if err != nil {
+		return errors.New(err)
+	}
+
+	if resp.StatusCode == 500 {
+		origErr := &errors.Error{}
+		if err := json.NewDecoder(resp.Body).Decode(origErr); err != nil {
+			return errors.New(err)
+		}
+		if origErr == nil {
+			panic("Cannot return 500 without error")
+		}
+
+		return origErr
+	}
+
+	defer resp.Body.Close()
+
+	return nil
+
+}
+
 // GetRepositoriesCiAddOwnerRepo add a specific repository to c i
 func (c *Client) GetRepositoriesCiAddOwnerRepo(ctx context.Context, owner string, repo string) *errors.Error {
 	route := "/repositories/ci/add/{owner}/{repo}"
@@ -1076,7 +1129,7 @@ func (c *Client) GetSubmit(ctx context.Context, all bool, repository string, sha
 }
 
 // GetTasks obtain the task list optionally filtering by repository and sha
-func (c *Client) GetTasks(ctx context.Context, page int64, perPage int64, repository string, sha string) (models.TaskList, *errors.Error) {
+func (c *Client) GetTasks(ctx context.Context, page int64, perPage int64, ref string, repository string, sha string) (models.TaskList, *errors.Error) {
 	route := "/tasks"
 
 	tmp := *c.url
@@ -1087,6 +1140,8 @@ func (c *Client) GetTasks(ctx context.Context, page int64, perPage int64, reposi
 	m["page"] = page
 
 	m["perPage"] = perPage
+
+	m["ref"] = ref
 
 	m["repository"] = repository
 
@@ -1141,7 +1196,7 @@ func (c *Client) GetTasks(ctx context.Context, page int64, perPage int64, reposi
 }
 
 // GetTasksCount count the tasks
-func (c *Client) GetTasksCount(ctx context.Context, repository string, sha string) (int64, *errors.Error) {
+func (c *Client) GetTasksCount(ctx context.Context, ref string, repository string, sha string) (int64, *errors.Error) {
 	route := "/tasks/count"
 
 	tmp := *c.url
@@ -1149,6 +1204,8 @@ func (c *Client) GetTasksCount(ctx context.Context, repository string, sha strin
 	u.Path += route
 
 	m := map[string]interface{}{}
+	m["ref"] = ref
+
 	m["repository"] = repository
 
 	m["sha"] = sha

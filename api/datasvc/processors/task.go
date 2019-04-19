@@ -34,7 +34,7 @@ func (ds *DataServer) PutTask(ctx context.Context, task *types.Task) (*types.Tas
 
 // ListTasks returns a list of tasks based on the query.
 func (ds *DataServer) ListTasks(ctx context.Context, req *data.TaskListRequest) (*types.TaskList, error) {
-	tasks, err := ds.H.Model.ListTasks(req.Repository, req.Sha, req.Page, req.PerPage)
+	tasks, err := ds.H.Model.ListTasks(req.Repository, req.Sha, req.Ref, req.Page, req.PerPage)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (ds *DataServer) ListTasks(ctx context.Context, req *data.TaskListRequest) 
 
 // CountTasks counts the number of tasks that would be found by the query
 func (ds *DataServer) CountTasks(ctx context.Context, req *data.TaskListRequest) (*data.Count, error) {
-	count, err := ds.H.Model.CountTasks(req.Repository, req.Sha)
+	count, err := ds.H.Model.CountTasks(req.Repository, req.Sha, req.Ref)
 	if err != nil {
 		return nil, err
 	}

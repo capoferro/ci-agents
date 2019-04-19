@@ -81,6 +81,8 @@ func (hc HandlerConfig) Configure(router handlers.Routes) *errors.Error {
 	router.SetProcessor("/repositories/sub/add/{owner}/{repo}", "get", processors.AddRepositorySubscription)
 	router.SetProcessor("/repositories/sub/del/{owner}/{repo}", "get", processors.DeleteRepositorySubscription)
 
+	router.SetProcessor("/refs", "get", processors.ListRefsByRepository)
+
 	router.SetProcessor("/token", "get", processors.GetToken)
 	router.SetProcessor("/token", "delete", processors.DeleteToken)
 	router.SetWebsocketProcessor("/log/attach/{id}", processors.LogAttach)

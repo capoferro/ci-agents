@@ -31,10 +31,11 @@ func (c *Client) PutTask(task *model.Task) (*model.Task, *errors.Error) {
 // ListTasks returns the items in the task list that match the repository and
 // sha parameters; they may also be blank to select all items. page and perPage
 // are limiters to define pagination rules.
-func (c *Client) ListTasks(repository, sha string, page, perPage int64) ([]*model.Task, *errors.Error) {
+func (c *Client) ListTasks(repository, sha, ref string, page, perPage int64) ([]*model.Task, *errors.Error) {
 	tasks, err := c.client.ListTasks(context.Background(), &data.TaskListRequest{
 		Repository: repository,
 		Sha:        sha,
+		Ref:        ref,
 		Page:       page,
 		PerPage:    perPage,
 	})
@@ -57,8 +58,8 @@ func (c *Client) ListTasks(repository, sha string, page, perPage int64) ([]*mode
 }
 
 // CountTasks counts the tasks with the filters applied.
-func (c *Client) CountTasks(repository, sha string) (int64, *errors.Error) {
-	count, err := c.client.CountTasks(context.Background(), &data.TaskListRequest{Repository: repository, Sha: sha})
+func (c *Client) CountTasks(repository, sha, ref string) (int64, *errors.Error) {
+	count, err := c.client.CountTasks(context.Background(), &data.TaskListRequest{Repository: repository, Sha: sha, Ref: ref})
 	if err != nil {
 		return 0, errors.New(err)
 	}

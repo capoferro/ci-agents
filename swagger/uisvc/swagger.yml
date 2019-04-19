@@ -459,6 +459,25 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '../models.yml#/definitions/Error'
+  /refs: # TODO: I'm not sure this is the best endpoint... revisit before merge
+    get:
+      security:
+        - token: []
+        - session: []
+      parameters:
+        - in: query
+          name: repository 
+          required: true
+          type: string
+          description: Name of repository (eg. 'erikh/foo')
+      summary: Obtain the list of refs for a given repository
+      responses:
+        200:
+          description: OK
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '../models.yml#/definitions/Error'
   /tasks:
     get:
       security:
@@ -481,6 +500,11 @@ paths:
           type: string
           required: false
           description: optional; the repository name to get the tasks for.
+        - in: query
+          name: ref
+          type: string
+          required: false
+          description: optional; the name of the ref to get tasks by (eg. heads/master)
         - in: query
           name: sha 
           type: string
@@ -547,6 +571,11 @@ paths:
           type: string
           required: false
           description: optional; sha for filtering
+        - in: query
+          name: ref
+          type: string
+          required: false
+          description: optional; the name of the ref to get tasks by (eg. heads/master)
       description: >
         Perform a full count of tasks that meet the filter criteria (which can
         be no filter) and return it as integer.

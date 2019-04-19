@@ -33,3 +33,21 @@ func (c *Client) GetRefByNameAndSHA(repoName, sha string) (*model.Ref, *errors.E
 
 	return model.NewRefFromProto(ref)
 }
+
+func (c *Client) GetRefsByRepository(repoName string) ([]*model.Ref, *errors.Error) {
+	refList, err := c.client.GetRefsByRepository(context.Background(), &data.Name{Name: repoName})
+	if err != nil {
+		return nil, errors.New(err)
+	}
+
+	refs := []*model.Ref{}
+	for _, item := range refList.Items {
+		r, err := model.NewRefFromProto(item)
+		if err != nil {
+			return nil, err
+		}
+		refs = append(refs, r)
+	}
+
+	return refs, nil
+}

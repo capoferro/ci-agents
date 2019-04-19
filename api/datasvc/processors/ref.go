@@ -19,6 +19,20 @@ func (ds *DataServer) GetRefByNameAndSHA(ctx context.Context, rp *data.RefPair) 
 	return ref.ToProto(), nil
 }
 
+func (ds *DataServer) GetRefsByRepository(ctx context.Context, repoName *data.Name) (*data.RefList, error) {
+	refs, err := ds.H.Model.GetRefsByRepository(repoName.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	refList := &data.RefList{}
+	for _, r := range refs {
+		refList.Items = append(refList.Items, r.ToProto())
+	}
+
+	return refList, nil
+}
+
 // PutRef adds a ref to the database.
 func (ds *DataServer) PutRef(ctx context.Context, ref *types.Ref) (*types.Ref, error) {
 	ret, err := model.NewRefFromProto(ref)

@@ -280,6 +280,39 @@ func init() {
         }
       }
     },
+    "/refs": {
+      "get": {
+        "security": [
+          {
+            "token": []
+          },
+          {
+            "session": []
+          }
+        ],
+        "summary": "Obtain the list of refs for a given repository",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Name of repository (eg. 'erikh/foo')",
+            "name": "repository",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "../models.yml#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/repositories/ci/add/{owner}/{repo}": {
       "get": {
         "security": [
@@ -770,6 +803,12 @@ func init() {
           },
           {
             "type": "string",
+            "description": "optional; the name of the ref to get tasks by (eg. heads/master)",
+            "name": "ref",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "optional; the sha to get the tasks for.",
             "name": "sha",
             "in": "query"
@@ -814,6 +853,12 @@ func init() {
             "type": "string",
             "description": "optional; sha for filtering",
             "name": "sha",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "optional; the name of the ref to get tasks by (eg. heads/master)",
+            "name": "ref",
             "in": "query"
           }
         ],
@@ -1312,6 +1357,39 @@ func init() {
         }
       }
     },
+    "/refs": {
+      "get": {
+        "security": [
+          {
+            "token": []
+          },
+          {
+            "session": []
+          }
+        ],
+        "summary": "Obtain the list of refs for a given repository",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Name of repository (eg. 'erikh/foo')",
+            "name": "repository",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/repositories/ci/add/{owner}/{repo}": {
       "get": {
         "security": [
@@ -1802,6 +1880,12 @@ func init() {
           },
           {
             "type": "string",
+            "description": "optional; the name of the ref to get tasks by (eg. heads/master)",
+            "name": "ref",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "optional; the sha to get the tasks for.",
             "name": "sha",
             "in": "query"
@@ -1846,6 +1930,12 @@ func init() {
             "type": "string",
             "description": "optional; sha for filtering",
             "name": "sha",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "optional; the name of the ref to get tasks by (eg. heads/master)",
+            "name": "ref",
             "in": "query"
           }
         ],

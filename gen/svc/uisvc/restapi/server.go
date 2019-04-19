@@ -104,6 +104,19 @@ func (hc HandlerConfig) SetRoutes(h *handlers.H) {
 		UseCORS:        true,
 		UseAuth:        true,
 	}
+	p = handlers.TransformSwaggerRoute("/refs")
+
+	if h.Routes[p] == nil {
+		h.Routes[p] = map[string]*handlers.Route{}
+	}
+
+	h.Routes[p][strings.ToLower("GET")] = &handlers.Route{
+		ParamValidator: operations.GetRefsValidateURLParams,
+		Handler:        operations.GetRefs,
+		Method:         "GET",
+		UseCORS:        true,
+		UseAuth:        true,
+	}
 	p = handlers.TransformSwaggerRoute("/repositories/ci/add/{owner}/{repo}")
 
 	if h.Routes[p] == nil {

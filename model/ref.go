@@ -99,6 +99,19 @@ func (m *Model) GetRefByNameAndSHA(repoName string, sha string) (*Ref, *errors.E
 	return ref, errors.New(err)
 }
 
+// GetRefsByRepository returns the refs matching the repository
+func (m *Model) GetRefsByRepository(repoName string) ([]*Ref, *errors.Error) {
+	var refs []*Ref
+	err := m.WrapError(
+		m.Joins("inner join repositories on refs.repository_id = repositories.id").
+			Where("repositories.name = ?", repoName).
+			Find(&refs),
+		"getting refs by repository",
+	)
+
+	return refs, errors.New(err)
+}
+
 // PutRef adds the ref to the database.
 func (m *Model) PutRef(ref *Ref) *errors.Error {
 	return m.WrapError(m.Create(ref), "creating ref")

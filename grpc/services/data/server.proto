@@ -49,7 +49,9 @@ service Data {
   rpc GetCancel(types.IntID)                   returns (types.Status)           {};
 
   // Given a name and sha, look up the ref.
-  rpc GetRefByNameAndSHA(RefPair) returns (types.Ref)             {}; 
+  rpc GetRefByNameAndSHA(RefPair) returns (types.Ref)             {};
+	// Given a repository name, look up refs.
+	rpc GetRefsByRepository(Name)   returns (RefList)               {};
   // PutRef saves a ref.
   rpc PutRef(types.Ref)           returns (types.Ref)             {};
   // CancelRefByName cancels by branch or tag name.
@@ -155,6 +157,7 @@ message TaskListRequest {
   string  sha         = 2;
   int64   page        = 3;
   int64   perPage     = 4;
+	string  ref         = 5;
 }
 
 message RunListRequest {
@@ -167,6 +170,10 @@ message RunListRequest {
 message RepoUserSelection {
   string username = 1;
   string repoName = 2; // these are in owner/repo format
+}
+
+message RefList {
+  repeated types.Ref items = 1;
 }
 
 message RepoRef {

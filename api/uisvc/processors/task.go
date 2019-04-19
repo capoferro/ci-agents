@@ -16,7 +16,7 @@ func ListTasks(h *handlers.H, ctx *gin.Context) (interface{}, int, *errors.Error
 		return nil, 500, err
 	}
 
-	tasks, err := h.Clients.Data.ListTasks(ctx.GetString("repository"), ctx.GetString("sha"), page, perPage)
+	tasks, err := h.Clients.Data.ListTasks(ctx.GetString("repository"), ctx.GetString("sha"), ctx.GetString("ref"), page, perPage)
 	if err != nil {
 		return nil, 500, err
 	}
@@ -26,7 +26,7 @@ func ListTasks(h *handlers.H, ctx *gin.Context) (interface{}, int, *errors.Error
 
 // CountTasks counts the task list with the supplied repo/sha filtering.
 func CountTasks(h *handlers.H, ctx *gin.Context) (interface{}, int, *errors.Error) {
-	count, err := h.Clients.Data.CountTasks(ctx.GetString("repository"), ctx.GetString("sha"))
+	count, err := h.Clients.Data.CountTasks(ctx.GetString("repository"), ctx.GetString("sha"), ctx.GetString("ref"))
 	if err != nil {
 		return nil, 500, err
 	}
